@@ -96,25 +96,39 @@ def list_my_courses(
     enrollment_state: str = "active",
     include_concluded: bool = False,
 ) -> List[dict]:
-    """List the current student's courses. Filters to active by default.
+    """List only the current student's favorite courses.
 
-    - enrollment_state: 'active' | 'invited' | 'completed' | 'inactive'
-    - include_concluded: include concluded courses in results
+    Notes:
+    - Returns the user's favorites via `GET /users/self/favorites/courses`.
+    - `enrollment_state` is retained for backward compatibility and is applied client-side.
+    - `include_concluded`: include concluded courses in results.
     """
     user = _get_current_user()
 
-    # Apply enrollment filter via official API
-    kwargs: Dict[str, Any] = {}
-    if enrollment_state:
-        # Canvas accepts 'enrollment_state' (preferred). Some docs show 'enrollment_status'.
-        kwargs["enrollment_state"] = enrollment_state
-    courses = user.get_courses(**kwargs)
+    # Retrieve only favorite courses for the current user
+    courses = user.get_favorite_courses()
 
     results: List[dict] = []
     for c in courses:
+        # Optionally filter by enrollment_state if available on the course enrollments
+        if enrollment_state:
+            try:
+                # Some Course objects include enrollments; ensure at least one matches the desired state
+                enrollments = getattr(c, "enrollments", []) or []
+                if enrollments:
+                    if not any(
+                        (e.get("enrollment_state") or e.get("workflow_state")) == enrollment_state
+                        for e in enrollments
+                    ):
+                        continue
+            except Exception:
+                # If we can't inspect enrollments, fall back to including the course
+                pass
+
         # Skip concluded unless explicitly included
         if not include_concluded and getattr(c, "workflow_state", None) == "completed":
             continue
+
         results.append(
             _serialize(
                 c,

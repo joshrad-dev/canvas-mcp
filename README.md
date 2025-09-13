@@ -10,9 +10,33 @@
 -   `CANVAS_API_URL`: Base URL of your Canvas instance (e.g., `https://school.instructure.com`).
 -   `CANVAS_API_TOKEN`: Canvas access token for the student account.
 
-## Run
+## Installation
 
--   With uv: `uv run main.py`
+1. `git clone http://github.com/joshrad-dev/canvas-mcp && cd canvas-mcp`
+2. Create and sync the environment using `uv`:
+    - `uv venv`
+    - `uv sync`
+3. Add this MCP server to your MCP client's config JSON (fill in placeholders):
+
+```json
+{
+	"mcpServers": {
+		"canvas-mcp": {
+			"command": "uv",
+			"args": [
+				"run",
+				"--directory",
+				"/path/to/cloned/repo/canvas-mcp",
+				"path/to/canvas-mcp/main.py"
+			],
+			"env": {
+				"CANVAS_API_URL": "https://YOUR-SUBDOMAIN.instructure.com",
+				"CANVAS_API_TOKEN": "YOUR_CANVAS_ACCESS_TOKEN"
+			}
+		}
+	}
+}
+```
 
 ## Tools
 

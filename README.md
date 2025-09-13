@@ -1,5 +1,7 @@
 # Canvas MCP Server
 
+![](chatwise-screenshot.png)
+
 ## Overview
 
 -   MCP server exposing student-focused Canvas LMS tools using `canvasapi` and `fastmcp`.

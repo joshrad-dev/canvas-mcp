@@ -9,16 +9,37 @@
 
 ## Environment
 
--   `CANVAS_API_URL`: Base URL of your Canvas instance (e.g., `https://school.instructure.com`).
+-   `CANVAS_API_URL`: Base URL of your Canvas instance (e.g., `https://canvas.wisc.edu`).
 -   `CANVAS_API_TOKEN`: Canvas access token for the student account.
 
 ## Installation
 
-1. `git clone http://github.com/joshrad-dev/canvas-mcp && cd canvas-mcp`
+### Recommended (uvx)
+
+Add this server to your MCP client configuration using `uvx` so dependencies are resolved automatically on launch (fill in placeholders):
+
+```json
+{
+	"mcpServers": {
+		"canvas-mcp": {
+			"command": "uvx",
+			"args": ["git+https://github.com/joshrad-dev/canvas-mcp"],
+			"env": {
+				"CANVAS_API_URL": "https://YOUR-SUBDOMAIN.instructure.com",
+				"CANVAS_API_TOKEN": "YOUR_CANVAS_ACCESS_TOKEN"
+			}
+		}
+	}
+}
+```
+
+### Development
+
+1. `git clone https://github.com/joshrad-dev/canvas-mcp && cd canvas-mcp`
 2. Create and sync the environment using `uv`:
     - `uv venv`
     - `uv sync`
-3. Add this MCP server to your MCP client's config JSON (fill in placeholders):
+3. Update your MCP client config (fill in placeholders):
 
 ```json
 {
@@ -28,8 +49,8 @@
 			"args": [
 				"run",
 				"--directory",
-				"/path/to/cloned/repo/canvas-mcp",
-				"path/to/canvas-mcp/main.py"
+				"/absolute/path/to/canvas-mcp",
+				"/path/to/canvas-mcp/main.py"
 			],
 			"env": {
 				"CANVAS_API_URL": "https://YOUR-SUBDOMAIN.instructure.com",
@@ -51,8 +72,3 @@
 -   `list_upcoming_assignments(days=7, only_unsubmitted=True)`: Upcoming assignments across courses.
 -   `get_my_course_grade(course_id)`: Course grade summary for the student.
 -   `list_course_announcements(course_id, only_published=True)`: Course announcements.
-
-## Notes
-
--   This server intentionally excludes non-student/admin features.
--   Ensure the token has access to the courses/resources you wish to read.

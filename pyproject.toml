@@ -8,3 +8,6 @@ dependencies = [
     "canvasapi>=3.3.0",
     "fastmcp>=2.12.2",
 ]
+
+[project.scripts]
+canvas-mcp = "main:main"
